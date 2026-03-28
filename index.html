@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Orioles Spring 2026 Walk-Up Soundboard</title>
   <style>
     :root{
@@ -22,19 +22,24 @@
       --danger-hover:#9a3b27;
       --success:#7a4a12;
       --success-hover:#955b17;
-      --celebrate:#f29a2e;
-      --celebrate-hover:#ffb347;
-      --glow:rgba(255,106,19,0.25);
       --shadow:rgba(0,0,0,0.35);
     }
 
-    *{ box-sizing:border-box; }
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html, body{
+      overscroll-behavior:none;
+      touch-action:manipulation;
+    }
 
     body{
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       margin:0;
       padding:16px;
-      padding-bottom:110px;
+      padding-bottom:120px;
       background:
         radial-gradient(circle at top left, rgba(255,106,19,0.10), transparent 28%),
         linear-gradient(180deg, #121214 0%, #0d0d0e 100%);
@@ -65,45 +70,32 @@
 
     .player-row{
       display:grid;
-      grid-template-columns:1fr 1.3fr 44px;
+      grid-template-columns:1fr 1.3fr 96px;
       gap:10px;
       align-items:stretch;
     }
 
-    .player-row.dragging{
-      opacity:0.45;
-      transform:scale(0.995);
+    .reorder-controls{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
     }
 
-    .player-row.drag-over{
-      outline:2px dashed var(--accent);
-      outline-offset:4px;
-      border-radius:12px;
-      box-shadow:0 0 0 4px rgba(255,106,19,0.08);
-    }
-
-    .drag-handle{
+    .reorderBtn{
       display:flex;
       align-items:center;
       justify-content:center;
-      border:1px solid var(--border);
-      border-radius:10px;
+      padding:0;
+      min-height:56px;
+      font-size:20px;
+      font-weight:700;
+      border-radius:12px;
       background:linear-gradient(180deg, var(--panel-2), var(--panel));
-      color:var(--muted);
-      font-size:18px;
-      cursor:grab;
-      user-select:none;
-      box-shadow:0 2px 8px var(--shadow);
-      opacity:0.9;
+      color:var(--text);
     }
 
-    .drag-handle:hover{
-      color:var(--accent-2);
-      border-color:#5a4636;
-    }
-
-    .drag-handle:active{
-      cursor:grabbing;
+    .reorderBtn:disabled{
+      opacity:0.35;
     }
 
     button{
@@ -115,8 +107,9 @@
       background:linear-gradient(180deg, #2a2a2d, #202024);
       color:var(--text);
       cursor:pointer;
-      transition:background 0.15s ease, transform 0.05s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      transition:background 0.15s ease, transform 0.05s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
       box-shadow:0 3px 10px var(--shadow);
+      user-select:none;
     }
 
     button:hover{
@@ -126,6 +119,11 @@
 
     button:active{
       transform:translateY(1px);
+    }
+
+    button:disabled{
+      opacity:0.6;
+      cursor:default;
     }
 
     .musicBtn{
@@ -138,7 +136,7 @@
     .musicBtn:hover{
       background:linear-gradient(180deg, #ea7627, #bb5414);
       border-color:#ff9a4a;
-      box-shadow:0 0 0 3px rgba(255,106,19,0.12), 0 4px 14px var(--shadow);
+      box-shadow:0 4px 14px var(--shadow);
     }
 
     .celebrate-wrap{
@@ -149,15 +147,15 @@
       width:100%;
       font-weight:800;
       letter-spacing:0.4px;
-      background:linear-gradient(180deg, var(--celebrate-hover), var(--celebrate));
-      border-color:#ffd08c;
-      color:#fffaf4;
+      background:linear-gradient(180deg, #d7671e, #a84811);
+      border-color:#e27a33;
+      color:#fff8f1;
     }
 
     .celebrateBtn:hover{
-      background:linear-gradient(180deg, #ffc466, #f29a2e);
-      border-color:#ffe0aa;
-      box-shadow:0 0 0 3px rgba(255,179,71,0.12), 0 4px 14px var(--shadow);
+      background:linear-gradient(180deg, #ea7627, #bb5414);
+      border-color:#ff9a4a;
+      box-shadow:0 4px 14px var(--shadow);
     }
 
     .pill{
@@ -253,13 +251,17 @@
     .status{
       margin-top:14px;
       font-size:13px;
-      line-height:1.5;
+      line-height:1.55;
       padding-top:8px;
       border-top:1px solid rgba(255,255,255,0.06);
     }
 
     .muted{
       color:var(--muted);
+    }
+
+    .ok{
+      color:#f6c67b;
     }
 
     .bottom-controls{
@@ -276,6 +278,7 @@
       border-radius:16px;
       background:rgba(20,20,22,0.92);
       backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
       box-shadow:0 10px 30px rgba(0,0,0,0.45);
     }
 
@@ -286,9 +289,9 @@
       border-radius:12px;
     }
 
-    @media (max-width: 700px){
+    @media (max-width:700px){
       .player-row{
-        grid-template-columns:1fr 1.15fr 38px;
+        grid-template-columns:1fr 1.1fr 88px;
       }
 
       button{
@@ -298,6 +301,11 @@
 
       .topbar{
         gap:8px;
+      }
+
+      .reorderBtn{
+        min-height:52px;
+        font-size:18px;
       }
     }
   </style>
@@ -311,7 +319,7 @@
   </div>
 
   <div class="small">
-    Drag rows by the ☰ handle to reorder the lineup. Left button plays announcement, middle button plays music only. Tapping the same music button again fades it out. Announcement ducks music. If no music is playing, it will try to start that player’s music ducked first, but the announcement will still play even if the music file is missing.
+    Left button plays announcement, middle button plays music only. Tapping the same music button again fades it out. Announcement ducks music. Use the arrow buttons to reorder the lineup.
   </div>
 
   <div id="settingsPanel" class="settings-panel">
@@ -352,6 +360,9 @@
   <div class="status">
     <div>Music: <span id="musicStatus" class="muted">none</span></div>
     <div>Announce: <span id="voiceStatus" class="muted">idle</span></div>
+    <div>Audio: <span id="audioStatus" class="muted">not enabled</span></div>
+    <div>Ready: <span id="preloadStatus" class="muted">0 files warmed</span></div>
+    <div>Note: <span id="noteStatus" class="muted">Use Enable Audio before the first at-bat.</span></div>
   </div>
 
   <div class="bottom-controls">
@@ -361,21 +372,84 @@
 
   <script>
     (() => {
-      let players = ["Jude","Hawkins","Will","Moto","Ben","Bishop","Gabe","Calvin","Eddie","Mac","Max"];
+      const playersDefault = ["Jude","Hawkins","Will","Moto","Ben","Bishop","Gabe","Calvin","Eddie","Mac","Max"];
+      let players = [...playersDefault];
+
+      const EXPLICIT_MEDIA = {
+        Jude: {
+          music: ["media/Jude_Music.wav"],
+          announces: ["media/Jude_Announce.mp3"]
+        },
+        Hawkins: {
+          music: ["media/Hawkins_Music.wav"],
+          announces: ["media/Hawkins_Announce.mp3"]
+        },
+        Will: {
+          music: ["media/Will_Music.wav"],
+          announces: ["media/Will_Announce.mp3"]
+        },
+        Moto: {
+          music: ["media/Moto_Music.wav"],
+          announces: ["media/Moto_Announce.mp3"]
+        },
+        Ben: {
+          music: ["media/Ben_Music.wav"],
+          announces: ["media/Ben_Announce.mp3"]
+        },
+        Bishop: {
+          music: ["media/Bishop_Music.wav"],
+          announces: ["media/Bishop_Announce.mp3"]
+        },
+        Gabe: {
+          music: ["media/Gabe_Music.wav"],
+          announces: ["media/Gabe_Announce.mp3"]
+        },
+        Calvin: {
+          music: ["media/Calvin_Music.wav"],
+          announces: ["media/Calvin_Announce.mp3"]
+        },
+        Eddie: {
+          music: ["media/Eddie_Music.wav"],
+          announces: ["media/Eddie_Announce.mp3"]
+        },
+        Mac: {
+          music: ["media/Mac_Music.wav"],
+          announces: ["media/Mac_Announce.mp3"]
+        },
+        Max: {
+          music: ["media/Max_Music.wav"],
+          announces: ["media/Max_Announce.mp3"]
+        },
+        Celebrate: [
+          "media/Celebrate_Music_1.wav",
+          "media/Celebrate_Music_2.wav",
+          "media/Celebrate_Music_3.wav"
+        ]
+      };
+
+      const DISCOVERY_LIMITS = {
+        announceVariantsMax: 10,
+        celebrateVariantsMax: 10
+      };
 
       let audioCtx = null;
-      let musicGain = null;
-      let musicSource = null;
-      let currentMusicPlayer = null;
-
-      let voiceGain = null;
-      let voiceSource = null;
+      let musicBus = null;
+      let voiceBus = null;
+      let currentMusic = null;
+      let currentVoice = null;
       let isVoicePlaying = false;
+      let sourceCounter = 0;
+      let warmupStarted = false;
+      let warmupFinished = false;
+      let warmupPromise = null;
+      let globalActionToken = 0;
 
       const bufferCache = new Map();
-      const announceUrlCache = new Map();
-      const celebrateUrlCache = [];
-      let pendingMusicStopTimer = null;
+      const bufferPromiseCache = new Map();
+      const availabilityCache = new Map();
+      const discoveredMedia = new Map();
+      const playerDiscoveryPromises = new Map();
+      const warmedUrls = new Set();
 
       const settingsPanel = document.getElementById("settingsPanel");
       const toggleSettingsBtn = document.getElementById("toggleSettingsBtn");
@@ -392,6 +466,10 @@
 
       const musicStatus = document.getElementById("musicStatus");
       const voiceStatus = document.getElementById("voiceStatus");
+      const audioStatus = document.getElementById("audioStatus");
+      const preloadStatus = document.getElementById("preloadStatus");
+      const noteStatus = document.getElementById("noteStatus");
+      const enableAudioBtn = document.getElementById("enableAudioBtn");
 
       function getMusicVolume() {
         return parseFloat(musicVolumeSlider.value);
@@ -423,28 +501,40 @@
         return audioCtx ? audioCtx.currentTime : 0;
       }
 
+      function setNote(message, isGood = false) {
+        noteStatus.textContent = message;
+        noteStatus.className = isGood ? "ok" : "muted";
+      }
+
       function setStatus() {
-        musicStatus.textContent = currentMusicPlayer ? `${currentMusicPlayer} (playing)` : "none";
-        musicStatus.className = currentMusicPlayer ? "" : "muted";
+        musicStatus.textContent = currentMusic ? `${currentMusic.name} (playing)` : "none";
+        musicStatus.className = currentMusic ? "" : "muted";
 
         voiceStatus.textContent = isVoicePlaying ? "playing" : "idle";
         voiceStatus.className = isVoicePlaying ? "" : "muted";
+
+        if (!audioCtx) {
+          audioStatus.textContent = "not enabled";
+          audioStatus.className = "muted";
+        } else if (warmupFinished) {
+          audioStatus.textContent = "ready";
+          audioStatus.className = "ok";
+        } else if (warmupStarted) {
+          audioStatus.textContent = "warming";
+          audioStatus.className = "ok";
+        } else {
+          audioStatus.textContent = audioCtx.state;
+          audioStatus.className = "muted";
+        }
+
+        preloadStatus.textContent = `${warmedUrls.size} files warmed`;
       }
 
       function updateSettingLabels() {
         musicVolumeLabel.textContent = Number(getMusicVolume()).toFixed(2);
         announceVolumeLabel.textContent = Number(getAnnounceVolume()).toFixed(2);
         duckLabel.textContent = Number(getDuckAmount()).toFixed(2);
-
-        if (musicGain && !isVoicePlaying) {
-          musicGain.gain.value = getMusicVolume();
-        }
-        if (musicGain && isVoicePlaying) {
-          musicGain.gain.value = getDuckedMusicVolume();
-        }
-        if (voiceGain) {
-          voiceGain.gain.value = getAnnounceVolume();
-        }
+        applyBusLevels(0);
       }
 
       function savePlayerOrder() {
@@ -462,51 +552,55 @@
           const currentPlayers = [...players];
           const reordered = parsed.filter(name => currentPlayers.includes(name));
           const missing = currentPlayers.filter(name => !reordered.includes(name));
-
           players = [...reordered, ...missing];
-        } catch (err) {
+        } catch {
           console.log("Could not load saved player order.");
         }
       }
 
-      async function ensureAudio() {
+      async function ensureAudioContext() {
         if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-          musicGain = audioCtx.createGain();
-          voiceGain = audioCtx.createGain();
-
-          musicGain.gain.value = getMusicVolume();
-          voiceGain.gain.value = getAnnounceVolume();
-
-          musicGain.connect(audioCtx.destination);
-          voiceGain.connect(audioCtx.destination);
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass({ latencyHint: "interactive" });
+          musicBus = audioCtx.createGain();
+          voiceBus = audioCtx.createGain();
+          musicBus.connect(audioCtx.destination);
+          voiceBus.connect(audioCtx.destination);
         }
 
         if (audioCtx.state === "suspended") {
           await audioCtx.resume();
         }
+
+        applyBusLevels(0);
+        setStatus();
       }
 
-      async function loadBuffer(url) {
-        if (bufferCache.has(url)) return bufferCache.get(url);
+      function applyBusLevels(fadeMs = getDuckFadeMs()) {
+        if (!audioCtx || !musicBus || !voiceBus) return;
 
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Fetch failed: ${url}`);
+        const t0 = now();
+        const fadeSec = Math.max(0, fadeMs) / 1000;
+        const musicTarget = isVoicePlaying ? getDuckedMusicVolume() : getMusicVolume();
+        const voiceTarget = getAnnounceVolume();
 
-        const arr = await res.arrayBuffer();
-        const buf = await audioCtx.decodeAudioData(arr);
-        bufferCache.set(url, buf);
-        return buf;
+        musicBus.gain.cancelScheduledValues(t0);
+        musicBus.gain.setValueAtTime(musicBus.gain.value, t0);
+        musicBus.gain.linearRampToValueAtTime(musicTarget, t0 + fadeSec);
+
+        voiceBus.gain.cancelScheduledValues(t0);
+        voiceBus.gain.setValueAtTime(voiceBus.gain.value, t0);
+        voiceBus.gain.linearRampToValueAtTime(voiceTarget, t0 + Math.min(0.03, fadeSec || 0.03));
       }
 
-      async function urlExists(url) {
-        try {
-          const res = await fetch(url, { method: "HEAD", cache: "no-store" });
-          return res.ok;
-        } catch {
-          return false;
-        }
+      function scheduleIdleTask() {
+        return new Promise(resolve => {
+          if ("requestIdleCallback" in window) {
+            window.requestIdleCallback(() => resolve(), { timeout: 800 });
+          } else {
+            setTimeout(resolve, 25);
+          }
+        });
       }
 
       function shuffleArray(arr) {
@@ -518,378 +612,506 @@
         return copy;
       }
 
-      async function getRandomAnnounceUrl(playerName) {
-        if (announceUrlCache.has(playerName)) {
-          const cached = announceUrlCache.get(playerName);
-          return cached[Math.floor(Math.random() * cached.length)];
+      function uniqueUrls(arr) {
+        return [...new Set(arr.filter(Boolean))];
+      }
+
+      async function silentUnlock() {
+        const buffer = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+        const src = audioCtx.createBufferSource();
+        const gain = audioCtx.createGain();
+        gain.gain.value = 0;
+        src.buffer = buffer;
+        src.connect(gain).connect(audioCtx.destination);
+        src.start(0);
+        src.stop(0);
+      }
+
+      async function probeUrl(url) {
+        if (availabilityCache.has(url)) return availabilityCache.get(url);
+
+        let ok = false;
+
+        try {
+          const head = await fetch(url, { method: "HEAD", cache: "force-cache" });
+          ok = head.ok;
+        } catch {
+          ok = false;
         }
 
-        const numberedCandidates = [];
-        for (let i = 1; i <= 10; i++) {
-          numberedCandidates.push(`media/${playerName}_Announce_${i}.mp3`);
-        }
-
-        const valid = [];
-        for (const url of shuffleArray(numberedCandidates)) {
-          if (await urlExists(url)) {
-            valid.push(url);
+        if (!ok) {
+          try {
+            const res = await fetch(url, { cache: "force-cache" });
+            ok = res.ok;
+          } catch {
+            ok = false;
           }
         }
 
-        if (valid.length > 0) {
-          announceUrlCache.set(playerName, valid);
-          return valid[Math.floor(Math.random() * valid.length)];
-        }
-
-        const fallback = `media/${playerName}_Announce.mp3`;
-        if (await urlExists(fallback)) {
-          announceUrlCache.set(playerName, [fallback]);
-          return fallback;
-        }
-
-        return null;
+        availabilityCache.set(url, ok);
+        return ok;
       }
 
-      async function getRandomCelebrateUrl() {
-        if (celebrateUrlCache.length > 0) {
-          return celebrateUrlCache[Math.floor(Math.random() * celebrateUrlCache.length)];
+      async function loadBuffer(url) {
+        if (bufferCache.has(url)) return bufferCache.get(url);
+        if (bufferPromiseCache.has(url)) return bufferPromiseCache.get(url);
+
+        const promise = (async () => {
+          const res = await fetch(url, { cache: "force-cache" });
+          if (!res.ok) throw new Error(`Could not load ${url}`);
+          const arr = await res.arrayBuffer();
+          const buf = await audioCtx.decodeAudioData(arr.slice(0));
+          bufferCache.set(url, buf);
+          warmedUrls.add(url);
+          setStatus();
+          return buf;
+        })();
+
+        bufferPromiseCache.set(url, promise);
+
+        try {
+          return await promise;
+        } finally {
+          bufferPromiseCache.delete(url);
+        }
+      }
+
+      async function preloadUrls(urls) {
+        for (const url of urls) {
+          try {
+            await loadBuffer(url);
+          } catch {}
+        }
+      }
+
+      function buildDiscoveryCandidates(playerName) {
+        const explicit = EXPLICIT_MEDIA[playerName] || {};
+        const music = uniqueUrls([
+          ...(explicit.music || []),
+          `media/${playerName}_Music.m4a`,
+          `media/${playerName}_Music.mp3`,
+          `media/${playerName}_Music.wav`
+        ]);
+
+        const announces = [...(explicit.announces || [])];
+        announces.push(`media/${playerName}_Announce.mp3`);
+        announces.push(`media/${playerName}_Announce.m4a`);
+
+        for (let i = 1; i <= DISCOVERY_LIMITS.announceVariantsMax; i++) {
+          announces.push(`media/${playerName}_Announce_${i}.mp3`);
+          announces.push(`media/${playerName}_Announce_${i}.m4a`);
         }
 
-        const candidates = [];
-        for (let i = 1; i <= 10; i++) {
+        return {
+          music: uniqueUrls(music),
+          announces: uniqueUrls(announces)
+        };
+      }
+
+      function buildCelebrateCandidates() {
+        const explicit = EXPLICIT_MEDIA.Celebrate || [];
+        const candidates = [...explicit];
+
+        for (let i = 1; i <= DISCOVERY_LIMITS.celebrateVariantsMax; i++) {
+          candidates.push(`media/Celebrate_Music_${i}.m4a`);
+          candidates.push(`media/Celebrate_Music_${i}.mp3`);
           candidates.push(`media/Celebrate_Music_${i}.wav`);
         }
 
-        const valid = [];
-        for (const url of shuffleArray(candidates)) {
-          if (await urlExists(url)) {
-            valid.push(url);
+        return uniqueUrls(candidates);
+      }
+
+      async function discoverPlayerMedia(playerName) {
+        if (discoveredMedia.has(playerName)) return discoveredMedia.get(playerName);
+        if (playerDiscoveryPromises.has(playerName)) return playerDiscoveryPromises.get(playerName);
+
+        const promise = (async () => {
+          const candidates = buildDiscoveryCandidates(playerName);
+          const availableMusic = [];
+          const availableAnnounces = [];
+
+          for (const url of candidates.music) {
+            if (await probeUrl(url)) availableMusic.push(url);
           }
-        }
 
-        if (valid.length > 0) {
-          celebrateUrlCache.push(...valid);
-          return valid[Math.floor(Math.random() * valid.length)];
-        }
+          for (const url of candidates.announces) {
+            if (await probeUrl(url)) availableAnnounces.push(url);
+          }
 
-        return null;
+          const result = {
+            music: availableMusic,
+            announces: availableAnnounces
+          };
+
+          discoveredMedia.set(playerName, result);
+          return result;
+        })();
+
+        playerDiscoveryPromises.set(playerName, promise);
+
+        try {
+          return await promise;
+        } finally {
+          playerDiscoveryPromises.delete(playerName);
+        }
       }
 
-      function cancelPendingMusicStop() {
-        if (pendingMusicStopTimer) {
-          clearTimeout(pendingMusicStopTimer);
-          pendingMusicStopTimer = null;
+      async function discoverCelebrateMedia() {
+        if (discoveredMedia.has("Celebrate")) return discoveredMedia.get("Celebrate");
+
+        const candidates = buildCelebrateCandidates();
+        const available = [];
+
+        for (const url of candidates) {
+          if (await probeUrl(url)) available.push(url);
         }
+
+        const result = { music: available, announces: [] };
+        discoveredMedia.set("Celebrate", result);
+        return result;
       }
 
-      function rampMusicGain(target, fadeMs) {
-        if (!audioCtx || !musicGain) return;
+      async function warmAudioSystem() {
+        if (warmupPromise) return warmupPromise;
+
+        warmupPromise = (async () => {
+          await ensureAudioContext();
+          warmupStarted = true;
+          warmupFinished = false;
+          setNote("Audio unlocked. Warming files for smoother taps.", true);
+          setStatus();
+          enableAudioBtn.disabled = true;
+          enableAudioBtn.textContent = "Warming...";
+
+          await silentUnlock();
+
+          const priorityPlayers = players.slice(0, 5);
+          for (const playerName of priorityPlayers) {
+            const media = await discoverPlayerMedia(playerName);
+            await preloadUrls([...media.announces.slice(0, 2), ...media.music.slice(0, 1)]);
+          }
+
+          await scheduleIdleTask();
+
+          for (const playerName of players.slice(5)) {
+            const media = await discoverPlayerMedia(playerName);
+            await preloadUrls([...media.announces.slice(0, 2), ...media.music.slice(0, 1)]);
+          }
+
+          const celebrateMedia = await discoverCelebrateMedia();
+          await preloadUrls(celebrateMedia.music.slice(0, 3));
+
+          warmupFinished = true;
+          enableAudioBtn.disabled = false;
+          enableAudioBtn.textContent = "Audio Ready";
+          setNote("Warmup done. Live taps should feel much snappier.", true);
+          setStatus();
+        })();
+
+        return warmupPromise;
+      }
+
+      function createTrack(buffer, bus, initialGain = 1) {
+        const source = audioCtx.createBufferSource();
+        const gain = audioCtx.createGain();
+        const id = ++sourceCounter;
+        source.buffer = buffer;
+        gain.gain.value = initialGain;
+        source.connect(gain).connect(bus);
+        return { id, source, gain };
+      }
+
+      function stopTrack(track, fadeMs = 0) {
+        if (!track) return;
 
         const t0 = now();
         const fadeSec = Math.max(0, fadeMs) / 1000;
-        const current = musicGain.gain.value;
+        track.gain.gain.cancelScheduledValues(t0);
+        track.gain.gain.setValueAtTime(track.gain.gain.value, t0);
+        track.gain.gain.linearRampToValueAtTime(0.0001, t0 + fadeSec);
 
-        musicGain.gain.cancelScheduledValues(t0);
-        musicGain.gain.setValueAtTime(current, t0);
-        musicGain.gain.linearRampToValueAtTime(target, t0 + fadeSec);
-      }
-
-      function stopMusicImmediate() {
-        cancelPendingMusicStop();
-
-        if (musicSource) {
-          try { musicSource.stop(); } catch {}
-          try { musicSource.disconnect(); } catch {}
-        }
-
-        musicSource = null;
-        currentMusicPlayer = null;
-
-        if (musicGain) {
-          musicGain.gain.value = getMusicVolume();
-        }
-
-        setStatus();
-      }
-
-      function fadeOutMusicAndStop(ms) {
-        if (!musicSource) return;
-
-        cancelPendingMusicStop();
-
-        const fadeMs = Math.max(0, ms);
-        rampMusicGain(0.0001, fadeMs);
-
-        pendingMusicStopTimer = setTimeout(() => {
-          stopMusicImmediate();
-          if (musicGain) {
-            musicGain.gain.value = isVoicePlaying ? getDuckedMusicVolume() : getMusicVolume();
-          }
+        setTimeout(() => {
+          try { track.source.stop(); } catch {}
+          try { track.source.disconnect(); } catch {}
         }, fadeMs + 30);
       }
 
-      function stopVoiceImmediate() {
-        if (voiceSource) {
-          try { voiceSource.stop(); } catch {}
-          try { voiceSource.disconnect(); } catch {}
+      async function replaceMusic(url, displayName, crossfadeMs = 120, actionToken = globalActionToken) {
+        const buffer = await loadBuffer(url);
+
+        if (actionToken !== globalActionToken) {
+          return false;
         }
 
-        voiceSource = null;
-        isVoicePlaying = false;
+        const nextTrack = createTrack(buffer, musicBus, 0.0001);
+        const previousTrack = currentMusic;
 
-        if (voiceGain) {
-          voiceGain.gain.value = getAnnounceVolume();
+        currentMusic = {
+          ...nextTrack,
+          name: displayName,
+          url
+        };
+
+        nextTrack.source.onended = () => {
+          if (currentMusic && currentMusic.id === nextTrack.id) {
+            currentMusic = null;
+            setStatus();
+          }
+        };
+
+        const t0 = now();
+        const fadeSec = Math.max(0, crossfadeMs) / 1000;
+        nextTrack.source.start(t0);
+        nextTrack.gain.gain.setValueAtTime(0.0001, t0);
+        nextTrack.gain.gain.linearRampToValueAtTime(1, t0 + fadeSec);
+
+        if (previousTrack) {
+          previousTrack.gain.gain.cancelScheduledValues(t0);
+          previousTrack.gain.gain.setValueAtTime(previousTrack.gain.gain.value, t0);
+          previousTrack.gain.gain.linearRampToValueAtTime(0.0001, t0 + fadeSec);
+          setTimeout(() => {
+            try { previousTrack.source.stop(); } catch {}
+            try { previousTrack.source.disconnect(); } catch {}
+          }, crossfadeMs + 30);
         }
 
         setStatus();
+        return true;
+      }
+
+      function stopMusic(fadeMs = getFadeOutMs()) {
+        if (!currentMusic) return;
+        const track = currentMusic;
+        currentMusic = null;
+        stopTrack(track, fadeMs);
+        setStatus();
+      }
+
+      function stopVoice() {
+        if (!currentVoice) {
+          isVoicePlaying = false;
+          applyBusLevels(0);
+          setStatus();
+          return;
+        }
+
+        const track = currentVoice;
+        currentVoice = null;
+        isVoicePlaying = false;
+        stopTrack(track, 40);
+        applyBusLevels(getDuckFadeMs());
+        setStatus();
+      }
+
+      function invalidatePendingActions() {
+        globalActionToken++;
       }
 
       function stopAllImmediate() {
-        stopVoiceImmediate();
-        stopMusicImmediate();
+        invalidatePendingActions();
+        stopVoice();
+        stopMusic(40);
+        setNote("Stopped.");
       }
 
       function fadeOutAll() {
-        stopVoiceImmediate();
-        if (musicSource) {
-          fadeOutMusicAndStop(getFadeOutMs());
-        }
+        invalidatePendingActions();
+        stopVoice();
+        stopMusic(getFadeOutMs());
+        setNote("Fading out.");
+      }
+
+      function chooseRandom(arr) {
+        if (!arr.length) return null;
+        const shuffled = shuffleArray(arr);
+        return shuffled[0] || null;
       }
 
       async function playMusic(playerName) {
-        await ensureAudio();
+        await ensureAudioContext();
+        warmAudioSystem().catch(() => {});
 
-        if (currentMusicPlayer === playerName && musicSource) {
-          fadeOutMusicAndStop(getFadeOutMs());
+        const actionToken = ++globalActionToken;
+
+        if (currentMusic && currentMusic.name === playerName) {
+          stopMusic(getFadeOutMs());
+          setNote(`${playerName} music fading out.`);
           return;
         }
 
-        if (musicSource && currentMusicPlayer !== playerName) {
-          fadeOutMusicAndStop(Math.min(200, getFadeOutMs()));
-          await new Promise(r => setTimeout(r, 140));
+        const media = await discoverPlayerMedia(playerName);
+        if (actionToken !== globalActionToken) return;
+
+        const musicUrl = media.music[0];
+
+        if (!musicUrl) {
+          setNote(`No music file found for ${playerName}.`);
+          return;
         }
 
-        stopMusicImmediate();
+        const started = await replaceMusic(musicUrl, playerName, 120, actionToken);
+        if (!started) return;
 
-        const url = `media/${playerName}_Music.wav`;
-        const buf = await loadBuffer(url);
+        applyBusLevels(0);
+        setNote(`${playerName} music ready.`, true);
+      }
 
-        musicSource = audioCtx.createBufferSource();
-        musicSource.buffer = buf;
-        musicSource.connect(musicGain);
+      async function maybeStartMusicUnderAnnounce(playerName, actionToken) {
+        if (currentMusic) return;
 
-        musicSource.onended = () => {
-          if (currentMusicPlayer === playerName) {
-            currentMusicPlayer = null;
-            musicSource = null;
-            setStatus();
-          }
-        };
+        const media = await discoverPlayerMedia(playerName);
+        if (actionToken !== globalActionToken) return;
 
-        currentMusicPlayer = playerName;
-        musicGain.gain.value = isVoicePlaying ? getDuckedMusicVolume() : getMusicVolume();
+        const musicUrl = media.music[0];
+        if (!musicUrl) return;
 
-        musicSource.start();
-        setStatus();
+        const started = await replaceMusic(musicUrl, playerName, 60, actionToken);
+        if (!started) return;
+
+        applyBusLevels(0);
       }
 
       async function playCelebrate() {
-        await ensureAudio();
+        await ensureAudioContext();
+        warmAudioSystem().catch(() => {});
 
-        if (currentMusicPlayer === "Celebrate" && musicSource) {
-          fadeOutMusicAndStop(getFadeOutMs());
+        const actionToken = ++globalActionToken;
+
+        stopVoice();
+
+        if (currentMusic && currentMusic.name === "Celebrate") {
+          stopMusic(getFadeOutMs());
+          setNote("Celebrate fading out.");
           return;
         }
 
-        stopVoiceImmediate();
+        const celebrateMedia = await discoverCelebrateMedia();
+        if (actionToken !== globalActionToken) return;
 
-        if (musicSource && currentMusicPlayer !== "Celebrate") {
-          fadeOutMusicAndStop(Math.min(250, getFadeOutMs()));
-          await new Promise(r => setTimeout(r, 180));
-        }
-
-        const celebrateUrl = await getRandomCelebrateUrl();
+        const celebrateUrl = chooseRandom(celebrateMedia.music);
 
         if (!celebrateUrl) {
-          alert("No celebration tracks found. Add files like Celebrate_Music_1.wav");
+          setNote("No celebration tracks found.");
           return;
         }
 
-        stopMusicImmediate();
+        const started = await replaceMusic(celebrateUrl, "Celebrate", 120, actionToken);
+        if (!started) return;
 
-        const buf = await loadBuffer(celebrateUrl);
-
-        musicSource = audioCtx.createBufferSource();
-        musicSource.buffer = buf;
-        musicSource.connect(musicGain);
-
-        musicSource.onended = () => {
-          if (currentMusicPlayer === "Celebrate") {
-            currentMusicPlayer = null;
-            musicSource = null;
-            setStatus();
-          }
-        };
-
-        currentMusicPlayer = "Celebrate";
-        musicGain.gain.value = getMusicVolume();
-
-        musicSource.start();
-        setStatus();
+        applyBusLevels(0);
+        setNote("Celebrate track fired.", true);
       }
 
       async function playAnnounce(playerName) {
-        await ensureAudio();
+        await ensureAudioContext();
+        warmAudioSystem().catch(() => {});
 
-        const duckedVolume = getDuckedMusicVolume();
-        const duckFadeMs = getDuckFadeMs();
+        const actionToken = ++globalActionToken;
 
-        stopVoiceImmediate();
+        const media = await discoverPlayerMedia(playerName);
+        if (actionToken !== globalActionToken) return;
 
-        if (!musicSource) {
-          try {
-            const musicUrl = `media/${playerName}_Music.wav`;
-            const musicBuf = await loadBuffer(musicUrl);
+        const announceUrl = chooseRandom(media.announces);
 
-            musicSource = audioCtx.createBufferSource();
-            musicSource.buffer = musicBuf;
-            musicSource.connect(musicGain);
-
-            musicSource.onended = () => {
-              if (currentMusicPlayer === playerName) {
-                currentMusicPlayer = null;
-                musicSource = null;
-                setStatus();
-              }
-            };
-
-            currentMusicPlayer = playerName;
-            musicGain.gain.value = duckedVolume;
-            musicSource.start();
-            setStatus();
-          } catch (err) {
-            console.log(`No music file found for ${playerName}, playing announcement only.`);
-          }
-        } else {
-          rampMusicGain(duckedVolume, duckFadeMs);
+        if (!announceUrl) {
+          setNote(`No announcement file found for ${playerName}.`);
+          return;
         }
 
+        stopVoice();
+        isVoicePlaying = true;
+        applyBusLevels(getDuckFadeMs());
+        setStatus();
+
+        maybeStartMusicUnderAnnounce(playerName, actionToken).catch(() => {});
+
         try {
-          const announceUrl = await getRandomAnnounceUrl(playerName);
-
-          if (!announceUrl) {
-            alert(`No announce files found for ${playerName}`);
+          const buffer = await loadBuffer(announceUrl);
+          if (actionToken !== globalActionToken) {
             isVoicePlaying = false;
+            applyBusLevels(Math.max(120, getDuckFadeMs()));
             setStatus();
-
-            if (musicSource) {
-              rampMusicGain(getMusicVolume(), Math.max(120, duckFadeMs));
-            }
             return;
           }
 
-          const announceBuf = await loadBuffer(announceUrl);
+          const track = createTrack(buffer, voiceBus, 1);
+          currentVoice = track;
 
-          voiceSource = audioCtx.createBufferSource();
-          voiceSource.buffer = announceBuf;
-          voiceSource.connect(voiceGain);
-
-          voiceGain.gain.value = getAnnounceVolume();
-
-          isVoicePlaying = true;
-          setStatus();
-
-          voiceSource.onended = () => {
-            isVoicePlaying = false;
-            voiceSource = null;
-
-            if (musicSource) {
-              rampMusicGain(getMusicVolume(), Math.max(120, duckFadeMs));
+          track.source.onended = () => {
+            if (currentVoice && currentVoice.id === track.id) {
+              currentVoice = null;
+              isVoicePlaying = false;
+              applyBusLevels(Math.max(120, getDuckFadeMs()));
+              setStatus();
             }
-
-            setStatus();
           };
 
-          voiceSource.start();
-        } catch (err) {
-          alert(`Problem loading announce file(s) for ${playerName}`);
-          isVoicePlaying = false;
-          setStatus();
-
-          if (musicSource) {
-            rampMusicGain(getMusicVolume(), Math.max(120, duckFadeMs));
+          track.source.start(now());
+          setNote(`${playerName} announcement fired.`, true);
+        } catch {
+          if (actionToken === globalActionToken) {
+            currentVoice = null;
+            isVoicePlaying = false;
+            applyBusLevels(Math.max(120, getDuckFadeMs()));
+            setStatus();
+            setNote(`Problem loading announcement for ${playerName}.`);
           }
         }
+      }
+
+      function movePlayer(fromIndex, toIndex) {
+        if (fromIndex < 0 || toIndex < 0) return;
+        if (fromIndex >= players.length || toIndex >= players.length) return;
+        if (fromIndex === toIndex) return;
+
+        const moved = players.splice(fromIndex, 1)[0];
+        players.splice(toIndex, 0, moved);
+        savePlayerOrder();
+        buildBoard();
       }
 
       function buildBoard() {
         const board = document.getElementById("board");
         board.innerHTML = "";
 
-        let draggedIndex = null;
-
         players.forEach((p, index) => {
           const row = document.createElement("div");
           row.className = "player-row";
-          row.setAttribute("draggable", "true");
-          row.dataset.index = index;
-
-          row.addEventListener("dragstart", (e) => {
-            draggedIndex = index;
-            row.classList.add("dragging");
-            e.dataTransfer.effectAllowed = "move";
-            e.dataTransfer.setData("text/plain", String(index));
-          });
-
-          row.addEventListener("dragend", () => {
-            row.classList.remove("dragging");
-            document.querySelectorAll(".player-row").forEach(r => r.classList.remove("drag-over"));
-          });
-
-          row.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            row.classList.add("drag-over");
-            e.dataTransfer.dropEffect = "move";
-          });
-
-          row.addEventListener("dragleave", () => {
-            row.classList.remove("drag-over");
-          });
-
-          row.addEventListener("drop", (e) => {
-            e.preventDefault();
-            row.classList.remove("drag-over");
-
-            const fromIndex = draggedIndex ?? parseInt(e.dataTransfer.getData("text/plain"), 10);
-            const toIndex = index;
-
-            if (Number.isNaN(fromIndex) || fromIndex === toIndex) return;
-
-            const moved = players.splice(fromIndex, 1)[0];
-            players.splice(toIndex, 0, moved);
-
-            savePlayerOrder();
-            buildBoard();
-          });
-
-          const handle = document.createElement("div");
-          handle.className = "drag-handle";
-          handle.textContent = "☰";
-          handle.title = `Drag ${p}`;
 
           const musicBtn = document.createElement("button");
           musicBtn.className = "musicBtn";
           musicBtn.textContent = p;
-          musicBtn.addEventListener("click", () => playMusic(p).catch(err => alert(err.message)));
+          musicBtn.addEventListener("click", () => {
+            playMusic(p).catch(err => setNote(err.message || `Problem playing ${p} music.`));
+          });
 
           const annBtn = document.createElement("button");
           annBtn.textContent = `${p} Announce`;
-          annBtn.addEventListener("click", () => playAnnounce(p).catch(err => alert(err.message)));
+          annBtn.addEventListener("click", () => {
+            playAnnounce(p).catch(err => setNote(err.message || `Problem playing ${p} announcement.`));
+          });
+
+          const reorderWrap = document.createElement("div");
+          reorderWrap.className = "reorder-controls";
+
+          const upBtn = document.createElement("button");
+          upBtn.className = "reorderBtn";
+          upBtn.textContent = "↑";
+          upBtn.disabled = index === 0;
+          upBtn.addEventListener("click", () => movePlayer(index, index - 1));
+
+          const downBtn = document.createElement("button");
+          downBtn.className = "reorderBtn";
+          downBtn.textContent = "↓";
+          downBtn.disabled = index === players.length - 1;
+          downBtn.addEventListener("click", () => movePlayer(index, index + 1));
+
+          reorderWrap.appendChild(upBtn);
+          reorderWrap.appendChild(downBtn);
 
           row.appendChild(annBtn);
           row.appendChild(musicBtn);
-          row.appendChild(handle);
-
+          row.appendChild(reorderWrap);
           board.appendChild(row);
         });
       }
@@ -901,18 +1123,33 @@
       musicVolumeSlider.addEventListener("input", updateSettingLabels);
       announceVolumeSlider.addEventListener("input", updateSettingLabels);
       duckSlider.addEventListener("input", updateSettingLabels);
+      duckFadeMsInput.addEventListener("input", () => applyBusLevels(getDuckFadeMs()));
+      fadeOutMsInput.addEventListener("input", () => {});
 
-      document.getElementById("enableAudioBtn").addEventListener("click", async () => {
-        await ensureAudio();
-        alert("Audio enabled. You're good.");
+      enableAudioBtn.addEventListener("click", async () => {
+        try {
+          await warmAudioSystem();
+          setNote("Audio unlocked. Background warmup is complete.", true);
+        } catch (err) {
+          setNote(err.message || "Could not enable audio.");
+        }
       });
 
       document.getElementById("celebrateBtn").addEventListener("click", () => {
-        playCelebrate().catch(err => alert(err.message));
+        playCelebrate().catch(err => setNote(err.message || "Problem playing celebration track."));
       });
 
       document.getElementById("stopAllBtn").addEventListener("click", stopAllImmediate);
       document.getElementById("fadeAllBtn").addEventListener("click", fadeOutAll);
+
+      document.addEventListener("visibilitychange", async () => {
+        if (document.visibilityState === "visible" && audioCtx && audioCtx.state === "suspended") {
+          try {
+            await audioCtx.resume();
+            setStatus();
+          } catch {}
+        }
+      });
 
       loadPlayerOrder();
       updateSettingLabels();
