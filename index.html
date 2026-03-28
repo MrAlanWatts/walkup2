@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orioles Spring 2026 Walk-Up Soundboard</title>
+  <style>
+    :root{
+      --bg:#0f0f10;
+      --panel:#1a1a1c;
+      --panel-2:#222225;
+      --button:#26262a;
+      --button-hover:#303036;
+      --border:#3a3a40;
+      --text:#f5f1e8;
+      --muted:#b7aa96;
+      --accent:#ff6a13;
+      --accent-2:#ff8c32;
+      --music:#c85a17;
+      --music-hover:#e06a1c;
+      --danger:#7d2f1f;
+      --danger-hover:#9a3b27;
+      --success:#7a4a12;
+      --success-hover:#955b17;
+      --celebrate:#f29a2e;
+      --celebrate-hover:#ffb347;
+      --glow:rgba(255,106,19,0.25);
+      --shadow:rgba(0,0,0,0.35);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0;
+      padding:16px;
+      padding-bottom:110px;
+      background:
+        radial-gradient(circle at top left, rgba(255,106,19,0.10), transparent 28%),
+        linear-gradient(180deg, #121214 0%, #0d0d0e 100%);
+      color:var(--text);
+    }
+
+    h1{
+      margin:0 0 12px 0;
+      font-size:22px;
+      color:var(--text);
+      letter-spacing:0.3px;
+    }
+
+    .topbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:12px;
+    }
+
+    #board{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .player-row{
+      display:grid;
+      grid-template-columns:1fr 1.3fr 44px;
+      gap:10px;
+      align-items:stretch;
+    }
+
+    .player-row.dragging{
+      opacity:0.45;
+      transform:scale(0.995);
+    }
+
+    .player-row.drag-over{
+      outline:2px dashed var(--accent);
+      outline-offset:4px;
+      border-radius:12px;
+      box-shadow:0 0 0 4px rgba(255,106,19,0.08);
+    }
+
+    .drag-handle{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid var(--border);
+      border-radius:10px;
+      background:linear-gradient(180deg, var(--panel-2), var(--panel));
+      color:var(--muted);
+      font-size:18px;
+      cursor:grab;
+      user-select:none;
+      box-shadow:0 2px 8px var(--shadow);
+      opacity:0.9;
+    }
+
+    .drag-handle:hover{
+      color:var(--accent-2);
+      border-color:#5a4636;
+    }
+
+    .drag-handle:active{
+      cursor:grabbing;
+    }
+
+    button{
+      width:100%;
+      padding:16px 12px;
+      font-size:16px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, #2a2a2d, #202024);
+      color:var(--text);
+      cursor:pointer;
+      transition:background 0.15s ease, transform 0.05s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow:0 3px 10px var(--shadow);
+    }
+
+    button:hover{
+      background:linear-gradient(180deg, var(--button-hover), var(--button));
+      border-color:#5d4737;
+    }
+
+    button:active{
+      transform:translateY(1px);
+    }
+
+    .musicBtn{
+      font-weight:700;
+      background:linear-gradient(180deg, #d7671e, #a84811);
+      border-color:#e27a33;
+      color:#fff8f1;
+    }
+
+    .musicBtn:hover{
+      background:linear-gradient(180deg, #ea7627, #bb5414);
+      border-color:#ff9a4a;
+      box-shadow:0 0 0 3px rgba(255,106,19,0.12), 0 4px 14px var(--shadow);
+    }
+
+    .celebrate-wrap{
+      margin-top:14px;
+    }
+
+    .celebrateBtn{
+      width:100%;
+      font-weight:800;
+      letter-spacing:0.4px;
+      background:linear-gradient(180deg, var(--celebrate-hover), var(--celebrate));
+      border-color:#ffd08c;
+      color:#fffaf4;
+    }
+
+    .celebrateBtn:hover{
+      background:linear-gradient(180deg, #ffc466, #f29a2e);
+      border-color:#ffe0aa;
+      box-shadow:0 0 0 3px rgba(255,179,71,0.12), 0 4px 14px var(--shadow);
+    }
+
+    .pill{
+      width:auto;
+      padding:8px 12px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:linear-gradient(180deg, var(--panel-2), var(--panel));
+      color:var(--text);
+      box-shadow:0 2px 8px var(--shadow);
+    }
+
+    .dangerBtn{
+      background:linear-gradient(180deg, var(--danger-hover), var(--danger));
+      border-color:#a14a35;
+    }
+
+    .dangerBtn:hover{
+      background:linear-gradient(180deg, #ad4430, #873120);
+    }
+
+    .successBtn{
+      background:linear-gradient(180deg, var(--success-hover), var(--success));
+      border-color:#b36a19;
+    }
+
+    .successBtn:hover{
+      background:linear-gradient(180deg, #aa6719, #874f12);
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .settings-panel{
+      display:none;
+      margin-top:12px;
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:linear-gradient(180deg, var(--panel-2), var(--panel));
+      box-shadow:0 3px 10px var(--shadow);
+    }
+
+    .settings-panel.open{
+      display:block;
+    }
+
+    .settings-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+      gap:12px;
+    }
+
+    .setting-card{
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,0.02);
+    }
+
+    .setting-card label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .setting-value{
+      font-size:14px;
+      font-weight:700;
+      color:var(--text);
+      margin-left:6px;
+    }
+
+    input[type="range"]{
+      width:100%;
+      vertical-align:middle;
+      accent-color:var(--accent);
+    }
+
+    input[type="number"]{
+      width:100%;
+      background:var(--panel);
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius:7px;
+      padding:8px 10px;
+    }
+
+    .status{
+      margin-top:14px;
+      font-size:13px;
+      line-height:1.5;
+      padding-top:8px;
+      border-top:1px solid rgba(255,255,255,0.06);
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .bottom-controls{
+      position:fixed;
+      left:16px;
+      right:16px;
+      bottom:16px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      z-index:1000;
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:rgba(20,20,22,0.92);
+      backdrop-filter:blur(12px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.45);
+    }
+
+    .bottomBtn{
+      padding:16px 12px;
+      font-size:16px;
+      font-weight:700;
+      border-radius:12px;
+    }
+
+    @media (max-width: 700px){
+      .player-row{
+        grid-template-columns:1fr 1.15fr 38px;
+      }
+
+      button{
+        padding:14px 10px;
+        font-size:15px;
+      }
+
+      .topbar{
+        gap:8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Walk-Up Soundboard</h1>
+
+  <div class="topbar">
+    <button id="enableAudioBtn" class="pill successBtn">Enable Audio</button>
+    <button id="toggleSettingsBtn" class="pill">Settings</button>
+  </div>
+
+  <div class="small">
+    Drag rows by the ☰ handle to reorder the lineup. Left button plays announcement, middle button plays music only. Tapping the same music button again fades it out. Announcement ducks music. If no music is playing, it will try to start that player’s music ducked first, but the announcement will still play even if the music file is missing.
+  </div>
+
+  <div id="settingsPanel" class="settings-panel">
+    <div class="settings-grid">
+      <div class="setting-card">
+        <label for="musicVolumeSlider">Music Volume <span id="musicVolumeLabel" class="setting-value">1.00</span></label>
+        <input id="musicVolumeSlider" type="range" min="0" max="1" step="0.01" value="1.00" />
+      </div>
+
+      <div class="setting-card">
+        <label for="announceVolumeSlider">Announce Volume <span id="announceVolumeLabel" class="setting-value">1.00</span></label>
+        <input id="announceVolumeSlider" type="range" min="0" max="1" step="0.01" value="1.00" />
+      </div>
+
+      <div class="setting-card">
+        <label for="duckSlider">Duck Amount <span id="duckLabel" class="setting-value">0.25</span></label>
+        <input id="duckSlider" type="range" min="0.05" max="0.95" step="0.01" value="0.25" />
+      </div>
+
+      <div class="setting-card">
+        <label for="duckFadeMs">Duck Fade ms</label>
+        <input id="duckFadeMs" type="number" min="0" max="2000" value="120" />
+      </div>
+
+      <div class="setting-card">
+        <label for="fadeOutMs">Fade-out ms</label>
+        <input id="fadeOutMs" type="number" min="0" max="5000" value="2000" />
+      </div>
+    </div>
+  </div>
+
+  <div id="board"></div>
+
+  <div class="celebrate-wrap">
+    <button id="celebrateBtn" class="celebrateBtn">Celebrate 🎉</button>
+  </div>
+
+  <div class="status">
+    <div>Music: <span id="musicStatus" class="muted">none</span></div>
+    <div>Announce: <span id="voiceStatus" class="muted">idle</span></div>
+  </div>
+
+  <div class="bottom-controls">
+    <button id="fadeAllBtn" class="bottomBtn">Fade Out All</button>
+    <button id="stopAllBtn" class="bottomBtn dangerBtn">Stop All</button>
+  </div>
+
+  <script>
+    (() => {
+      let players = ["Jude","Hawkins","Will","Moto","Ben","Bishop","Gabe","Calvin","Eddie","Mac","Max"];
+
+      let audioCtx = null;
+      let musicGain = null;
+      let musicSource = null;
+      let currentMusicPlayer = null;
+
+      let voiceGain = null;
+      let voiceSource = null;
+      let isVoicePlaying = false;
+
+      const bufferCache = new Map();
+      const announceUrlCache = new Map();
+      const celebrateUrlCache = [];
+      let pendingMusicStopTimer = null;
+
+      const settingsPanel = document.getElementById("settingsPanel");
+      const toggleSettingsBtn = document.getElementById("toggleSettingsBtn");
+
+      const musicVolumeSlider = document.getElementById("musicVolumeSlider");
+      const announceVolumeSlider = document.getElementById("announceVolumeSlider");
+      const duckSlider = document.getElementById("duckSlider");
+      const duckFadeMsInput = document.getElementById("duckFadeMs");
+      const fadeOutMsInput = document.getElementById("fadeOutMs");
+
+      const musicVolumeLabel = document.getElementById("musicVolumeLabel");
+      const announceVolumeLabel = document.getElementById("announceVolumeLabel");
+      const duckLabel = document.getElementById("duckLabel");
+
+      const musicStatus = document.getElementById("musicStatus");
+      const voiceStatus = document.getElementById("voiceStatus");
+
+      function getMusicVolume() {
+        return parseFloat(musicVolumeSlider.value);
+      }
+
+      function getAnnounceVolume() {
+        return parseFloat(announceVolumeSlider.value);
+      }
+
+      function getDuckAmount() {
+        return parseFloat(duckSlider.value);
+      }
+
+      function getDuckedMusicVolume() {
+        return getMusicVolume() * getDuckAmount();
+      }
+
+      function getDuckFadeMs() {
+        const n = parseInt(duckFadeMsInput.value || "0", 10);
+        return Math.max(0, Math.min(2000, n));
+      }
+
+      function getFadeOutMs() {
+        const n = parseInt(fadeOutMsInput.value || "0", 10);
+        return Math.max(0, Math.min(5000, n));
+      }
+
+      function now() {
+        return audioCtx ? audioCtx.currentTime : 0;
+      }
+
+      function setStatus() {
+        musicStatus.textContent = currentMusicPlayer ? `${currentMusicPlayer} (playing)` : "none";
+        musicStatus.className = currentMusicPlayer ? "" : "muted";
+
+        voiceStatus.textContent = isVoicePlaying ? "playing" : "idle";
+        voiceStatus.className = isVoicePlaying ? "" : "muted";
+      }
+
+      function updateSettingLabels() {
+        musicVolumeLabel.textContent = Number(getMusicVolume()).toFixed(2);
+        announceVolumeLabel.textContent = Number(getAnnounceVolume()).toFixed(2);
+        duckLabel.textContent = Number(getDuckAmount()).toFixed(2);
+
+        if (musicGain && !isVoicePlaying) {
+          musicGain.gain.value = getMusicVolume();
+        }
+        if (musicGain && isVoicePlaying) {
+          musicGain.gain.value = getDuckedMusicVolume();
+        }
+        if (voiceGain) {
+          voiceGain.gain.value = getAnnounceVolume();
+        }
+      }
+
+      function savePlayerOrder() {
+        localStorage.setItem("walkup_players", JSON.stringify(players));
+      }
+
+      function loadPlayerOrder() {
+        const saved = localStorage.getItem("walkup_players");
+        if (!saved) return;
+
+        try {
+          const parsed = JSON.parse(saved);
+          if (!Array.isArray(parsed) || !parsed.length) return;
+
+          const currentPlayers = [...players];
+          const reordered = parsed.filter(name => currentPlayers.includes(name));
+          const missing = currentPlayers.filter(name => !reordered.includes(name));
+
+          players = [...reordered, ...missing];
+        } catch (err) {
+          console.log("Could not load saved player order.");
+        }
+      }
+
+      async function ensureAudio() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+          musicGain = audioCtx.createGain();
+          voiceGain = audioCtx.createGain();
+
+          musicGain.gain.value = getMusicVolume();
+          voiceGain.gain.value = getAnnounceVolume();
+
+          musicGain.connect(audioCtx.destination);
+          voiceGain.connect(audioCtx.destination);
+        }
+
+        if (audioCtx.state === "suspended") {
+          await audioCtx.resume();
+        }
+      }
+
+      async function loadBuffer(url) {
+        if (bufferCache.has(url)) return bufferCache.get(url);
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Fetch failed: ${url}`);
+
+        const arr = await res.arrayBuffer();
+        const buf = await audioCtx.decodeAudioData(arr);
+        bufferCache.set(url, buf);
+        return buf;
+      }
+
+      async function urlExists(url) {
+        try {
+          const res = await fetch(url, { method: "HEAD", cache: "no-store" });
+          return res.ok;
+        } catch {
+          return false;
+        }
+      }
+
+      function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      async function getRandomAnnounceUrl(playerName) {
+        if (announceUrlCache.has(playerName)) {
+          const cached = announceUrlCache.get(playerName);
+          return cached[Math.floor(Math.random() * cached.length)];
+        }
+
+        const numberedCandidates = [];
+        for (let i = 1; i <= 10; i++) {
+          numberedCandidates.push(`media/${playerName}_Announce_${i}.mp3`);
+        }
+
+        const valid = [];
+        for (const url of shuffleArray(numberedCandidates)) {
+          if (await urlExists(url)) {
+            valid.push(url);
+          }
+        }
+
+        if (valid.length > 0) {
+          announceUrlCache.set(playerName, valid);
+          return valid[Math.floor(Math.random() * valid.length)];
+        }
+
+        const fallback = `media/${playerName}_Announce.mp3`;
+        if (await urlExists(fallback)) {
+          announceUrlCache.set(playerName, [fallback]);
+          return fallback;
+        }
+
+        return null;
+      }
+
+      async function getRandomCelebrateUrl() {
+        if (celebrateUrlCache.length > 0) {
+          return celebrateUrlCache[Math.floor(Math.random() * celebrateUrlCache.length)];
+        }
+
+        const candidates = [];
+        for (let i = 1; i <= 20; i++) {
+          candidates.push(`media/Celebrate_Music_${i}.wav`);
+        }
+
+        const valid = [];
+        for (const url of shuffleArray(candidates)) {
+          if (await urlExists(url)) {
+            valid.push(url);
+          }
+        }
+
+        if (valid.length > 0) {
+          celebrateUrlCache.push(...valid);
+          return valid[Math.floor(Math.random() * valid.length)];
+        }
+
+        return null;
+      }
+
+      function cancelPendingMusicStop() {
+        if (pendingMusicStopTimer) {
+          clearTimeout(pendingMusicStopTimer);
+          pendingMusicStopTimer = null;
+        }
+      }
+
+      function rampMusicGain(target, fadeMs) {
+        if (!audioCtx || !musicGain) return;
+
+        const t0 = now();
+        const fadeSec = Math.max(0, fadeMs) / 1000;
+        const current = musicGain.gain.value;
+
+        musicGain.gain.cancelScheduledValues(t0);
+        musicGain.gain.setValueAtTime(current, t0);
+        musicGain.gain.linearRampToValueAtTime(target, t0 + fadeSec);
+      }
+
+      function stopMusicImmediate() {
+        cancelPendingMusicStop();
+
+        if (musicSource) {
+          try { musicSource.stop(); } catch {}
+          try { musicSource.disconnect(); } catch {}
+        }
+
+        musicSource = null;
+        currentMusicPlayer = null;
+
+        if (musicGain) {
+          musicGain.gain.value = getMusicVolume();
+        }
+
+        setStatus();
+      }
+
+      function fadeOutMusicAndStop(ms) {
+        if (!musicSource) return;
+
+        cancelPendingMusicStop();
+
+        const fadeMs = Math.max(0, ms);
+        rampMusicGain(0.0001, fadeMs);
+
+        pendingMusicStopTimer = setTimeout(() => {
+          stopMusicImmediate();
+          if (musicGain) {
+            musicGain.gain.value = isVoicePlaying ? getDuckedMusicVolume() : getMusicVolume();
+          }
+        }, fadeMs + 30);
+      }
+
+      function stopVoiceImmediate() {
+        if (voiceSource) {
+          try { voiceSource.stop(); } catch {}
+          try { voiceSource.disconnect(); } catch {}
+        }
+
+        voiceSource = null;
+        isVoicePlaying = false;
+
+        if (voiceGain) {
+          voiceGain.gain.value = getAnnounceVolume();
+        }
+
+        setStatus();
+      }
+
+      function stopAllImmediate() {
+        stopVoiceImmediate();
+        stopMusicImmediate();
+      }
+
+      function fadeOutAll() {
+        stopVoiceImmediate();
+        if (musicSource) {
+          fadeOutMusicAndStop(getFadeOutMs());
+        }
+      }
+
+      async function playMusic(playerName) {
+        await ensureAudio();
+
+        if (currentMusicPlayer === playerName && musicSource) {
+          fadeOutMusicAndStop(getFadeOutMs());
+          return;
+        }
+
+        if (musicSource && currentMusicPlayer !== playerName) {
+          fadeOutMusicAndStop(Math.min(200, getFadeOutMs()));
+          await new Promise(r => setTimeout(r, 140));
+        }
+
+        stopMusicImmediate();
+
+        const url = `media/${playerName}_Music.wav`;
+        const buf = await loadBuffer(url);
+
+        musicSource = audioCtx.createBufferSource();
+        musicSource.buffer = buf;
+        musicSource.connect(musicGain);
+
+        musicSource.onended = () => {
+          if (currentMusicPlayer === playerName) {
+            currentMusicPlayer = null;
+            musicSource = null;
+            setStatus();
+          }
+        };
+
+        currentMusicPlayer = playerName;
+        musicGain.gain.value = isVoicePlaying ? getDuckedMusicVolume() : getMusicVolume();
+
+        musicSource.start();
+        setStatus();
+      }
+
+      async function playCelebrate() {
+        await ensureAudio();
+
+        stopVoiceImmediate();
+
+        if (musicSource) {
+          fadeOutMusicAndStop(Math.min(250, getFadeOutMs()));
+          await new Promise(r => setTimeout(r, 180));
+        }
+
+        const celebrateUrl = await getRandomCelebrateUrl();
+
+        if (!celebrateUrl) {
+          alert("No celebration tracks found. Add files like Celebrate_Music_1.wav");
+          return;
+        }
+
+        stopMusicImmediate();
+
+        const buf = await loadBuffer(celebrateUrl);
+
+        musicSource = audioCtx.createBufferSource();
+        musicSource.buffer = buf;
+        musicSource.connect(musicGain);
+
+        musicSource.onended = () => {
+          currentMusicPlayer = null;
+          musicSource = null;
+          setStatus();
+        };
+
+        currentMusicPlayer = "Celebrate";
+        musicGain.gain.value = getMusicVolume();
+
+        musicSource.start();
+        setStatus();
+      }
+
+      async function playAnnounce(playerName) {
+        await ensureAudio();
+
+        const duckedVolume = getDuckedMusicVolume();
+        const duckFadeMs = getDuckFadeMs();
+
+        stopVoiceImmediate();
+
+        if (!musicSource) {
+          try {
+            const musicUrl = `media/${playerName}_Music.wav`;
+            const musicBuf = await loadBuffer(musicUrl);
+
+            musicSource = audioCtx.createBufferSource();
+            musicSource.buffer = musicBuf;
+            musicSource.connect(musicGain);
+
+            musicSource.onended = () => {
+              if (currentMusicPlayer === playerName) {
+                currentMusicPlayer = null;
+                musicSource = null;
+                setStatus();
+              }
+            };
+
+            currentMusicPlayer = playerName;
+            musicGain.gain.value = duckedVolume;
+            musicSource.start();
+            setStatus();
+          } catch (err) {
+            console.log(`No music file found for ${playerName}, playing announcement only.`);
+          }
+        } else {
+          rampMusicGain(duckedVolume, duckFadeMs);
+        }
+
+        try {
+          const announceUrl = await getRandomAnnounceUrl(playerName);
+
+          if (!announceUrl) {
+            alert(`No announce files found for ${playerName}`);
+            isVoicePlaying = false;
+            setStatus();
+
+            if (musicSource) {
+              rampMusicGain(getMusicVolume(), Math.max(120, duckFadeMs));
+            }
+            return;
+          }
+
+          const announceBuf = await loadBuffer(announceUrl);
+
+          voiceSource = audioCtx.createBufferSource();
+          voiceSource.buffer = announceBuf;
+          voiceSource.connect(voiceGain);
+
+          voiceGain.gain.value = getAnnounceVolume();
+
+          isVoicePlaying = true;
+          setStatus();
+
+          voiceSource.onended = () => {
+            isVoicePlaying = false;
+            voiceSource = null;
+
+            if (musicSource) {
+              rampMusicGain(getMusicVolume(), Math.max(120, duckFadeMs));
+            }
+
+            setStatus();
+          };
+
+          voiceSource.start();
+        } catch (err) {
+          alert(`Problem loading announce file(s) for ${playerName}`);
+          isVoicePlaying = false;
+          setStatus();
+
+          if (musicSource) {
+            rampMusicGain(getMusicVolume(), Math.max(120, duckFadeMs));
+          }
+        }
+      }
+
+      function buildBoard() {
+        const board = document.getElementById("board");
+        board.innerHTML = "";
+
+        let draggedIndex = null;
+
+        players.forEach((p, index) => {
+          const row = document.createElement("div");
+          row.className = "player-row";
+          row.setAttribute("draggable", "true");
+          row.dataset.index = index;
+
+          row.addEventListener("dragstart", (e) => {
+            draggedIndex = index;
+            row.classList.add("dragging");
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", String(index));
+          });
+
+          row.addEventListener("dragend", () => {
+            row.classList.remove("dragging");
+            document.querySelectorAll(".player-row").forEach(r => r.classList.remove("drag-over"));
+          });
+
+          row.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            row.classList.add("drag-over");
+            e.dataTransfer.dropEffect = "move";
+          });
+
+          row.addEventListener("dragleave", () => {
+            row.classList.remove("drag-over");
+          });
+
+          row.addEventListener("drop", (e) => {
+            e.preventDefault();
+            row.classList.remove("drag-over");
+
+            const fromIndex = draggedIndex ?? parseInt(e.dataTransfer.getData("text/plain"), 10);
+            const toIndex = index;
+
+            if (Number.isNaN(fromIndex) || fromIndex === toIndex) return;
+
+            const moved = players.splice(fromIndex, 1)[0];
+            players.splice(toIndex, 0, moved);
+
+            savePlayerOrder();
+            buildBoard();
+          });
+
+          const handle = document.createElement("div");
+          handle.className = "drag-handle";
+          handle.textContent = "☰";
+          handle.title = `Drag ${p}`;
+
+          const musicBtn = document.createElement("button");
+          musicBtn.className = "musicBtn";
+          musicBtn.textContent = p;
+          musicBtn.addEventListener("click", () => playMusic(p).catch(err => alert(err.message)));
+
+          const annBtn = document.createElement("button");
+          annBtn.textContent = `${p} Announce`;
+          annBtn.addEventListener("click", () => playAnnounce(p).catch(err => alert(err.message)));
+
+          row.appendChild(annBtn);
+          row.appendChild(musicBtn);
+          row.appendChild(handle);
+
+          board.appendChild(row);
+        });
+      }
+
+      toggleSettingsBtn.addEventListener("click", () => {
+        settingsPanel.classList.toggle("open");
+      });
+
+      musicVolumeSlider.addEventListener("input", updateSettingLabels);
+      announceVolumeSlider.addEventListener("input", updateSettingLabels);
+      duckSlider.addEventListener("input", updateSettingLabels);
+
+      document.getElementById("enableAudioBtn").addEventListener("click", async () => {
+        await ensureAudio();
+        alert("Audio enabled. You're good.");
+      });
+
+      document.getElementById("celebrateBtn").addEventListener("click", () => {
+        playCelebrate().catch(err => alert(err.message));
+      });
+
+      document.getElementById("stopAllBtn").addEventListener("click", stopAllImmediate);
+      document.getElementById("fadeAllBtn").addEventListener("click", fadeOutAll);
+
+      loadPlayerOrder();
+      updateSettingLabels();
+      buildBoard();
+      setStatus();
+    })();
+  </script>
+</body>
+</html>
