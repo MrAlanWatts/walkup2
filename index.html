@@ -556,7 +556,7 @@
         }
 
         const candidates = [];
-        for (let i = 1; i <= 20; i++) {
+        for (let i = 1; i <= 10; i++) {
           candidates.push(`media/Celebrate_Music_${i}.wav`);
         }
 
@@ -696,9 +696,14 @@
       async function playCelebrate() {
         await ensureAudio();
 
+        if (currentMusicPlayer === "Celebrate" && musicSource) {
+          fadeOutMusicAndStop(getFadeOutMs());
+          return;
+        }
+
         stopVoiceImmediate();
 
-        if (musicSource) {
+        if (musicSource && currentMusicPlayer !== "Celebrate") {
           fadeOutMusicAndStop(Math.min(250, getFadeOutMs()));
           await new Promise(r => setTimeout(r, 180));
         }
@@ -719,9 +724,11 @@
         musicSource.connect(musicGain);
 
         musicSource.onended = () => {
-          currentMusicPlayer = null;
-          musicSource = null;
-          setStatus();
+          if (currentMusicPlayer === "Celebrate") {
+            currentMusicPlayer = null;
+            musicSource = null;
+            setStatus();
+          }
         };
 
         currentMusicPlayer = "Celebrate";
